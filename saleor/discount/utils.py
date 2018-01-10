@@ -2,8 +2,7 @@ from django.conf import settings
 from django.db.models import F
 from django.utils.encoding import smart_text
 from django.utils.translation import pgettext
-from prices import FixedDiscount, Price
-
+from prices import Money, TaxedMoney
 
 from ..cart.utils import (
     get_category_variants_and_prices, get_product_variants_and_prices)
@@ -57,10 +56,9 @@ def get_product_discounts(product, discounts):
 def calculate_discounted_price(product, price, discounts):
     """Return minimum product's price of all prices with discounts applied."""
     if discounts:
-        discounts = list(
-            get_product_discounts(product, discounts))
+        discounts = list(get_product_discounts(product, discounts))
         if discounts:
-            price = min(price | discount for discount in discounts)
+            price = min(discount(price) for discount in discounts)
     return price
 
 
@@ -68,7 +66,7 @@ def _get_value_voucher_discount_for_checkout(voucher, checkout):
     """Calculate discount value for a voucher of value type."""
     cart_total = checkout.get_subtotal()
     voucher.validate_limit(cart_total)
-    return voucher.get_fixed_discount_for(cart_total)
+    return voucher.get_discount_amount_for(cart_total)
 
 
 def _get_shipping_voucher_discount_for_checkout(voucher, checkout):
@@ -94,7 +92,7 @@ def _get_shipping_voucher_discount_for_checkout(voucher, checkout):
             msg % {'country': voucher.get_apply_to_display()})
     cart_total = checkout.get_subtotal()
     voucher.validate_limit(cart_total)
-    return voucher.get_fixed_discount_for(shipping_method.price)
+    return voucher.get_discount_amount_for(shipping_method.get_total())
 
 
 def _get_product_or_category_voucher_discount_for_checkout(voucher, checkout):
@@ -114,14 +112,15 @@ def _get_product_or_category_voucher_discount_for_checkout(voucher, checkout):
         raise NotApplicable(msg)
     if voucher.apply_to == VoucherApplyToProduct.ALL_PRODUCTS:
         discounts = (
-            voucher.get_fixed_discount_for(price) for price in prices)
-        discount_total = sum(
-            (discount.amount for discount in discounts),
-            Price(0, currency=settings.DEFAULT_CURRENCY))
-        return FixedDiscount(discount_total, smart_text(voucher))
-    product_total = sum(
-        prices, Price(0, currency=settings.DEFAULT_CURRENCY))
-    return voucher.get_fixed_discount_for(product_total)
+            voucher.get_discount_amount_for(price) for price in prices)
+        total_amount = sum(
+            discounts, Money(0, currency=settings.DEFAULT_CURRENCY))
+        return total_amount
+    zero_total = TaxedMoney(
+        net=Money(0, currency=settings.DEFAULT_CURRENCY),
+        gross=Money(0, currency=settings.DEFAULT_CURRENCY))
+    product_total = sum(prices, zero_total)
+    return voucher.get_discount_amount_for(product_total)
 
 
 def get_voucher_discount_for_checkout(voucher, checkout):

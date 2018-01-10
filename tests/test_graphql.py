@@ -121,7 +121,7 @@ def test_product_query(client, product_in_stock):
                         availability {
                             available,
                             priceRange {
-                                minPrice {
+                                start {
                                     gross
                                     net
                                     currency
@@ -143,8 +143,8 @@ def test_product_query(client, product_in_stock):
     product_data = product_edges_data[0]['node']
     assert product_data['name'] == product.name
     assert product_data['url'] == product.get_absolute_url()
-    gross = product_data['availability']['priceRange']['minPrice']['gross']
-    assert float(gross) == float(product.price.gross)
+    gross = product_data['availability']['priceRange']['start']['gross']
+    assert float(gross) == float(product.price.amount)
 
 
 def test_filter_product_by_category(client, product_in_stock):
@@ -354,9 +354,8 @@ def test_real_query(client, product_in_stock):
         name
         price {
             currency
-            gross
-            grossLocalized
-            net
+            amount
+            localized
             __typename
         }
         availability {
@@ -376,13 +375,13 @@ def test_real_query(client, product_in_stock):
             __typename
         }
         priceRange {
-            maxPrice {
+            stop {
                 gross
                 grossLocalized
                 currency
                 __typename
             }
-            minPrice {
+            start {
                 gross
                 grossLocalized
                 currency
