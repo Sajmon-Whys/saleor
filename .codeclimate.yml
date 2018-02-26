@@ -1,6 +1,7 @@
 engines:
   eslint:
     enabled: true
+    channel: "eslint-4"
   pep8:
     enabled: true
   pylint:
@@ -10,7 +11,7 @@ engines:
     config:
       languages:
         python:
-          mass_threshold: 100 
+          mass_threshold: 100
           python_version: 3
 exclude_patterns:
 - "**/migrations/"
