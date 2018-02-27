@@ -12,7 +12,7 @@ from payments import PaymentStatus
 from prices import Money, TaxedMoney
 
 from ...core.exceptions import InsufficientStock
-from ...core.utils import get_paginator_items
+from ...core.utils import ZERO_TAXED_MONEY, get_paginator_items
 from ...order import GroupStatus
 from ...order.models import DeliveryGroup, Order, OrderLine, OrderNote
 from ...product.models import StockLocation
@@ -53,8 +53,7 @@ def order_details(request, order_pk):
     all_payments = order.payments.exclude(status=PaymentStatus.INPUT)
     payment = order.payments.last()
     groups = list(order)
-    zero_amount = Money(0, currency=order.total.currency)
-    captured = preauthorized = TaxedMoney(net=zero_amount, gross=zero_amount)
+    captured = preauthorized = ZERO_TAXED_MONEY
     balance = captured - order.total
     if payment:
         can_capture = (

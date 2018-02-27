@@ -6,6 +6,7 @@ from prices import Money, TaxedMoney
 
 from ..cart.utils import (
     get_category_variants_and_prices, get_product_variants_and_prices)
+from ..core.utils import ZERO_TAXED_MONEY
 from .models import NotApplicable
 from . import VoucherApplyToProduct, VoucherType
 
@@ -116,10 +117,7 @@ def _get_product_or_category_voucher_discount_for_checkout(voucher, checkout):
         total_amount = sum(
             discounts, Money(0, currency=settings.DEFAULT_CURRENCY))
         return total_amount
-    zero_total = TaxedMoney(
-        net=Money(0, currency=settings.DEFAULT_CURRENCY),
-        gross=Money(0, currency=settings.DEFAULT_CURRENCY))
-    product_total = sum(prices, zero_total)
+    product_total = sum(prices, ZERO_TAXED_MONEY)
     return voucher.get_discount_amount_for(product_total)
 
 

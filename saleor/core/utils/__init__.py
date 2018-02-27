@@ -14,9 +14,13 @@ from django_countries import countries
 from django_countries.fields import Country
 from django_prices_openexchangerates import exchange_currency
 from geolite2 import geolite2
-from prices import Money, MoneyRange
+from prices import Money, TaxedMoney, MoneyRange
 
 from ...account.models import User
+
+ZERO_TAXED_MONEY = TaxedMoney(
+    net=Money(0, currency=settings.DEFAULT_CURRENCY),
+    gross=Money(0, currency=settings.DEFAULT_CURRENCY))
 
 georeader = geolite2.reader()
 

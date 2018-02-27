@@ -14,6 +14,7 @@ from ..account.utils import store_user_address
 from ..cart.models import Cart
 from ..cart.utils import get_or_empty_db_cart
 from ..core import analytics
+from ..core.utils import ZERO_TAXED_MONEY
 from ..discount.models import NotApplicable, Voucher
 from ..discount.utils import (
     increase_voucher_usage, get_voucher_discount_for_checkout)
@@ -21,9 +22,6 @@ from ..order.models import Order
 from ..shipping.models import ANY_COUNTRY, ShippingMethodCountry
 
 STORAGE_SESSION_KEY = 'checkout_storage'
-ZERO_TAXED_MONEY = TaxedMoney(
-    net=Money(0, currency=settings.DEFAULT_CURRENCY),
-    gross=Money(0, currency=settings.DEFAULT_CURRENCY))
 
 
 class Checkout:
@@ -111,9 +109,7 @@ class Checkout:
             if self.shipping_method and partition.is_shipping_required():
                 shipping_cost = self.shipping_method.get_total_price()
             else:
-                shipping_cost = TaxedMoney(
-                    net=Money(0, currency=settings.DEFAULT_CURRENCY),
-                    gross=Money(0, currency=settings.DEFAULT_CURRENCY))
+                shipping_cost = ZERO_TAXED_MONEY
             total_with_shipping = partition.get_total(
                 discounts=self.cart.discounts) + shipping_cost
 

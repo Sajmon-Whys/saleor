@@ -16,7 +16,7 @@ from prices import Money, TaxedMoney
 
 from . import GroupStatus, OrderStatus
 from ..account.models import Address
-from ..core.utils import build_absolute_uri
+from ..core.utils import ZERO_TAXED_MONEY, build_absolute_uri
 from ..discount.models import Voucher
 from ..product.models import Product
 from .transitions import (
@@ -157,11 +157,8 @@ class Order(models.Model):
         return dict(OrderStatus.CHOICES)[self.status]
 
     def get_subtotal(self):
-        zero_subtotal = TaxedMoney(
-            net=Money(0, currency=settings.DEFAULT_CURRENCY),
-            gross=Money(0, currency=settings.DEFAULT_CURRENCY))
         subtotal_iterator = (line.get_total() for line in self.get_lines())
-        return sum(subtotal_iterator, zero_subtotal)
+        return sum(subtotal_iterator, ZERO_TAXED_MONEY)
 
     def can_cancel(self):
         return self.status == OrderStatus.OPEN

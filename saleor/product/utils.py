@@ -10,13 +10,10 @@ from prices import Money, TaxedMoney, TaxedMoneyRange
 
 from . import ProductAvailabilityStatus, VariantAvailabilityStatus
 from ..cart.utils import get_cart_from_request, get_or_create_cart_from_request
-from ..core.utils import get_paginator_items, to_local_currency
+from ..core.utils import (
+    ZERO_TAXED_MONEY, get_paginator_items, to_local_currency)
 from ..core.utils.filters import get_now_sorted_by
 from .forms import ProductForm
-
-ZERO_TAXED_MONEY = TaxedMoney(
-    net=Money(0, currency=settings.DEFAULT_CURRENCY),
-    gross=Money(0, currency=settings.DEFAULT_CURRENCY))
 
 
 def products_visible_to_user(user):

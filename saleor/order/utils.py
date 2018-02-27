@@ -9,6 +9,7 @@ from prices import Money, TaxedMoney, fixed_discount
 from . import GroupStatus
 from ..account.utils import store_user_address
 from ..core.exceptions import InsufficientStock
+from ..core.utils import ZERO_TAXED_MONEY
 from ..product.utils import allocate_stock
 
 
@@ -48,10 +49,7 @@ def recalculate_order(order):
     prices = [
         group.get_total() for group in order
         if group.status != GroupStatus.CANCELLED]
-    zero = TaxedMoney(
-        net=Money(0, currency=settings.DEFAULT_CURRENCY),
-        gross=Money(0, currency=settings.DEFAULT_CURRENCY))
-    total = sum(prices, zero)
+    total = sum(prices, ZERO_TAXED_MONEY)
     total += TaxedMoney(net=order.shipping_price, gross=order.shipping_price)
     if order.discount_amount:
         total -= order.discount_amount
