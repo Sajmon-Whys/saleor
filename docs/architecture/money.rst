@@ -3,14 +3,14 @@ Handling Money Amounts
 
 Saleor uses the `Prices <https://github.com/mirumee/prices/>`_ and `django-prices <https://github.com/mirumee/django-prices/>`_ libraries to store, calculate and display amounts of money, prices and ranges of those.
 
-Those libraries were developed at the Mirumee, home of the Saleor, with one eye towards its current and future requirements and thus reflect certain design decisions one must be aware of when working with money amounts:
-
 Default currency
 ----------------
 
-By design all prices entered in the dashboard and stored in database are in single currency, specified in the `DEFAULT_CURRENCY` setting. Saleor is capable of displaying prices in user's currency, but scenario where store offers different items with prices in different currencies is not supported. Additionally, no conversion is performed on amounts used to calculate orders total prices or sent to payment providers.
+All prices are entered and stored in a single default currency controlled by the [DEFAULT_CURRENCY setting]. Saleor can display prices in a user's local currency (see [Open Exchange Rates integration]) but all purchases are charged in the default currency.
 
-There's nothing stopping you from changing that setting in an active store, but this will make amounts kept for historical reasons (eg. order items) inaccurate.
+.. warning::
+
+  The currency is not stored in the database. Changing the default currency in a production environment will not recalculate any existing orders. All numbers will remain the same and will be incorrectly displayed as the new currency.
 
 Money and TaxedMoney
 --------------------
