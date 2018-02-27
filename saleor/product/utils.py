@@ -134,7 +134,7 @@ def product_json_ld(product, attributes=None):
             '@type': 'Offer',
             'availability': available,
             'itemCondition': 'http://schema.org/NewCondition',
-            'price': price.gross,
+            'price': price.gross.amount,
             'priceCurrency': price.currency,
             'sku': variant.sku}
         data['offers'].append(variant_data)
@@ -174,7 +174,7 @@ def get_variant_picker_data(product, discounts=None, local_currency=None):
         schema_data = {'@type': 'Offer',
                        'itemCondition': 'http://schema.org/NewCondition',
                        'priceCurrency': price.currency,
-                       'price': price.net}
+                       'price': price.net.amount}
         in_stock = variant.is_in_stock()
         if in_stock:
             schema_data['availability'] = 'http://schema.org/InStock'
@@ -231,9 +231,9 @@ def price_as_dict(price):
         return None
     return {
         'currency': price.currency,
-        'gross': price.gross,
+        'gross': price.gross.amount,
         'grossLocalized': prices_i18n.amount(price.gross),
-        'net': price.net,
+        'net': price.net.amount,
         'netLocalized': prices_i18n.amount(price.net)}
 
 

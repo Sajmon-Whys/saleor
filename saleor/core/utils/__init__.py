@@ -115,10 +115,10 @@ def get_user_shipping_country(request):
     return request.country
 
 
-def serialize_amount(obj):
-    if isinstance(obj, Money):
-        return str(obj.amount)
-    return JSONEncoder.default(obj)
+def serialize_decimal(obj):
+    if isinstance(obj, decimal.Decimal):
+        return str(obj)
+    return JSONEncoder().default(obj)
 
 
 def create_superuser(credentials):
