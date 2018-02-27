@@ -63,11 +63,9 @@ class ManagePaymentForm(forms.Form):
                 'Payment form error', 'Payment gateway error: %s') % message)
 
     def try_payment_action(self, action):
-        # Unwrap Money() object to Decimal before passing it
-        # to payments utility library for processing
-        amount = self.cleaned_data['amount'].amount
+        money = self.cleaned_data['amount']
         try:
-            action(amount)
+            action(money.amount)
         except (PaymentError, ValueError) as e:
             self.payment_error(str(e))
             return False
