@@ -48,11 +48,10 @@ def recalculate_order(order):
     prices = [
         group.get_total() for group in order
         if group.status != GroupStatus.CANCELLED]
-    total_net = sum(p.net.amount for p in prices)
-    total_gross = sum(p.gross.amount for p in prices)
-    total = TaxedMoney(
-        net=Money(total_net, currency=settings.DEFAULT_CURRENCY),
-        gross=Money(total_gross, currency=settings.DEFAULT_CURRENCY))
+    zero = TaxedMoney(
+        net=Money(0, currency=settings.DEFAULT_CURRENCY),
+        gross=Money(0, currency=settings.DEFAULT_CURRENCY))
+    total = sum(prices, zero)
     total += TaxedMoney(net=order.shipping_price, gross=order.shipping_price)
     if order.discount_amount:
         total -= order.discount_amount
