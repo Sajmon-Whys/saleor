@@ -21,6 +21,9 @@ from ..order.models import Order
 from ..shipping.models import ANY_COUNTRY, ShippingMethodCountry
 
 STORAGE_SESSION_KEY = 'checkout_storage'
+ZERO_TAXED_MONEY = TaxedMoney(
+    net=Money(0, currency=settings.DEFAULT_CURRENCY),
+    gross=Money(0, currency=settings.DEFAULT_CURRENCY))
 
 
 class Checkout:
@@ -396,26 +399,18 @@ class Checkout:
 
     def get_subtotal(self):
         """Calculate order total without shipping and discount."""
-        zero_subtotal = TaxedMoney(
-            net=Money(0, currency=settings.DEFAULT_CURRENCY),
-            gross=Money(0, currency=settings.DEFAULT_CURRENCY))
-
         cost_iterator = (
             total - shipping_cost
             for shipment, shipping_cost, total in self.deliveries)
-        total = sum(cost_iterator, zero_subtotal)
+        total = sum(cost_iterator, ZERO_TAXED_MONEY)
         return total
 
     def get_total(self):
         """Calculate order total with shipping and discount amount."""
-        zero_total = TaxedMoney(
-            net=Money(0, currency=settings.DEFAULT_CURRENCY),
-            gross=Money(0, currency=settings.DEFAULT_CURRENCY))
-
         cost_iterator = (
             total
             for shipment, shipping_cost, total in self.deliveries)
-        total = sum(cost_iterator, zero_total)
+        total = sum(cost_iterator, ZERO_TAXED_MONEY)
         if self.discount:
             return total - self.discount
         return total

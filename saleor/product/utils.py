@@ -14,6 +14,10 @@ from ..core.utils import get_paginator_items, to_local_currency
 from ..core.utils.filters import get_now_sorted_by
 from .forms import ProductForm
 
+ZERO_TAXED_MONEY = TaxedMoney(
+    net=Money(0, currency=settings.DEFAULT_CURRENCY),
+    gross=Money(0, currency=settings.DEFAULT_CURRENCY))
+
 
 def products_visible_to_user(user):
     # pylint: disable=cyclic-import
@@ -313,10 +317,8 @@ def get_variant_availability_status(variant):
 
 
 def get_product_costs_data(product):
-    zero = TaxedMoney(
-        net=Money(0, currency=settings.DEFAULT_CURRENCY),
-        gross=Money(0, currency=settings.DEFAULT_CURRENCY))
-    purchase_costs_range = TaxedMoneyRange(start=zero, stop=zero)
+    purchase_costs_range = TaxedMoneyRange(
+        start=ZERO_TAXED_MONEY, stop=ZERO_TAXED_MONEY)
     gross_margin = (0, 0)
 
     if not product.variants.exists():
@@ -363,10 +365,7 @@ def get_variant_costs_data(variant):
 
 def get_cost_price(stock):
     if not stock.cost_price:
-        zero_price = TaxedMoney(
-            net=Money(0, currency=settings.DEFAULT_CURRENCY),
-            gross=Money(0, currency=settings.DEFAULT_CURRENCY))
-        return zero_price
+        return ZERO_TAXED_MONEY
     return stock.get_total()
 
 
