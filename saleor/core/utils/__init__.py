@@ -9,6 +9,7 @@ from django.contrib.sites.models import Site
 from django.core.paginator import InvalidPage, Paginator
 from django.http import Http404
 from django.utils.encoding import iri_to_uri, smart_text
+from django_babel.templatetags.babel import currencyfmt
 from django_countries import countries
 from django_countries.fields import Country
 from django_prices_openexchangerates import exchange_currency
@@ -85,6 +86,10 @@ def get_paginator_items(items, paginate_by, page_number):
         raise Http404('Invalid page (%(page_number)s): %(message)s' % {
             'page_number': page_number, 'message': str(err)})
     return items
+
+
+def format_money(money):
+    return currencyfmt(money.amount, money.currency)
 
 
 def to_local_currency(price, currency):
