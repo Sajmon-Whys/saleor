@@ -97,7 +97,6 @@ def update(request, cart, variant_id):
         if cart:
             cart_total = cart.get_total(discounts=discounts)
             response['total'] = format_money(cart_total.gross)
-            # FIXME: Currency exchange doesn't work with new prices package
             local_cart_total = to_local_currency(cart_total, request.currency)
             if local_cart_total is not None:
                 response['localTotal'] = format_money(local_cart_total.gross)
