@@ -3,7 +3,7 @@
 {% load discount_as_negative from voucher %}
 
 {% if form %}
-  {% if checkout.discount_amount %}
+  {% if checkout.discount %}
     <form action="{% url "checkout:remove-voucher" %}?next={{ request.path }}"
           method="post"
           class="float-left input-btn">
@@ -16,7 +16,7 @@
       </button>
     </form>
     <div class="float-right">
-      {% discount_as_negative checkout.discount_amount %}
+      {% discount_as_negative checkout.discount %}
     </div>
   {% else %}
     <form action="{{ request.path }}?next={{ request.path }}" method="post">

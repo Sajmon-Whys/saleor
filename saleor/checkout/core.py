@@ -212,22 +212,22 @@ class Checkout:
         self.modified = True
 
     @property
-    def discount_amount(self):
-        """Return a discount amount if any."""
+    def discount(self):
+        """Return a discount if any."""
         value = self.storage.get('discount_value')
         currency = self.storage.get('discount_currency')
         if value is not None and currency is not None:
             return Money(value, currency=currency)
         return None
 
-    @discount_amount.setter
-    def discount_amount(self, discount):
+    @discount.setter
+    def discount(self, discount):
         self.storage['discount_value'] = smart_text(discount.amount)
         self.storage['discount_currency'] = discount.currency
         self.modified = True
 
-    @discount_amount.deleter
-    def discount_amount(self):
+    @discount.deleter
+    def discount(self):
         if 'discount_value' in self.storage:
             del self.storage['discount_value']
             self.modified = True
@@ -339,7 +339,7 @@ class Checkout:
 
         if voucher is not None:
             order_data['voucher'] = voucher
-            order_data['discount_amount'] = self.discount_amount
+            order_data['discount_amount'] = self.discount
             order_data['discount_name'] = self.discount_name
 
         order = Order.objects.create(**order_data)
@@ -382,15 +382,15 @@ class Checkout:
         voucher = self._get_voucher()
         if voucher is not None:
             try:
-                self.discount_amount = get_voucher_discount_for_checkout(
+                self.discount = get_voucher_discount_for_checkout(
                     voucher, self)
                 self.discount_name = voucher.name
             except NotApplicable:
-                del self.discount_amount
+                del self.discount
                 del self.discount_name
                 del self.voucher_code
         else:
-            del self.discount_amount
+            del self.discount
             del self.discount_name
             del self.voucher_code
 
@@ -416,8 +416,8 @@ class Checkout:
             total
             for shipment, shipping_cost, total in self.deliveries)
         total = sum(cost_iterator, zero_total)
-        if self.discount_amount:
-            return total - self.discount_amount
+        if self.discount:
+            return total - self.discount
         return total
 
 
