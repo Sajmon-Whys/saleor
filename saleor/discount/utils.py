@@ -92,7 +92,7 @@ def _get_shipping_voucher_discount_for_checkout(voucher, checkout):
             msg % {'country': voucher.get_apply_to_display()})
     cart_total = checkout.get_subtotal()
     voucher.validate_limit(cart_total)
-    return voucher.get_discount_amount_for(shipping_method.get_total())
+    return voucher.get_discount_amount_for(shipping_method.get_total_price())
 
 
 def _get_product_or_category_voucher_discount_for_checkout(voucher, checkout):

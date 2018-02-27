@@ -50,11 +50,13 @@
               <p>{% trans "Shipment" context "Order review section" %}</p>
             </div>
             <div class="col-4">
-              <p class="float-right">{% if checkout.shipping_method %}
-                {{ checkout.shipping_method.get_total.gross|amount }}
-              {% else %}
-                &mdash;
-              {% endif %}</p>
+              <p class="float-right">
+                {% if checkout.shipping_method %}
+                  {{ checkout.shipping_method.get_total_price.gross|amount }}
+                {% else %}
+                  &mdash;
+                {% endif %}
+              </p>
             </div>
           </div>
           <div class="row checkout__review__section">

@@ -106,7 +106,7 @@ class Checkout:
         """
         for partition in self.cart.partition():
             if self.shipping_method and partition.is_shipping_required():
-                shipping_cost = self.shipping_method.get_gross_price()
+                shipping_cost = self.shipping_method.get_total_price()
             else:
                 shipping_cost = TaxedMoney(
                     net=Money(0, currency=settings.DEFAULT_CURRENCY),
@@ -317,7 +317,7 @@ class Checkout:
             self.billing_address, is_billing=True)
 
         if self.shipping_method:
-            shipping_price = self.shipping_method.get_gross_price()
+            shipping_price = self.shipping_method.get_total_price()
         else:
             shipping_price = TaxedMoney(
                 net=Money(0, currency=settings.DEFAULT_CURRENCY),

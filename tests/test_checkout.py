@@ -87,7 +87,8 @@ def test_checkout_deliveries_with_shipping_method(monkeypatch):
         currency=settings.DEFAULT_CURRENCY)
 
     shipping_price = TaxedMoney(net=shipping_cost, gross=shipping_cost)
-    shipping_method_mock = Mock(get_gross_price=Mock(return_value=shipping_price))
+    shipping_method_mock = Mock(
+        get_total_price=Mock(return_value=shipping_price))
     monkeypatch.setattr(Checkout, 'shipping_method', shipping_method_mock)
 
     checkout = Checkout(cart, AnonymousUser(), 'tracking_code')
