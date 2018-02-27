@@ -26,7 +26,7 @@
     "classnames": "^2.2.5",
     "detect-passive-events": "^1.0.4",
     "dropzone": "^5.2.0",
-    "enzyme-adapter-react-15": "^1.0.5",
+    "enzyme-adapter-react-16": "^1.1.1",
     "favicons-webpack-plugin": "^0.0.7",
     "graphql": "^0.12.3",
     "graphql-tag": "^2.6.1",
@@ -117,11 +117,14 @@
       "schema": "./saleor/static/schema.json"
     }
   },
+  "jest": {
+    "globals": {}
+  },
   "scripts": {
     "build-assets": "node ./node_modules/webpack/bin/webpack.js -p --progress",
     "heroku-postbuild": "npm run build-assets && npm run build-emails",
     "start": "UV_THREADPOOL_SIZE=8 node ./node_modules/webpack/bin/webpack.js -d --watch --progress",
     "build-emails": "mkdir -p templates/templated_email/compiled/ && find templates -name \"*.mjml\" -not -path \"templates/templated_email/source/*partials/*\" -not -path \"templates/templated_email/source/*shared/*\" -exec ./node_modules/.bin/mjml -l skip {} -o templates/templated_email/compiled/ \\;",
-    "test": "jest saleor/static/dashboard/js/components/test"
+    "test": "jest saleor/static/dashboard/js/components/app/test"
   }
 }
