@@ -56,7 +56,7 @@
                       {{ sale }}
                     </td>
                     <td>
-                      {{ sale.value }}&nbsp;<span class="currency">{{ sale.get_type_display }}</span>
+                      {{ sale.value }}{{ sale.get_type_display }}
                     </td>
                   </tr>
                 {% endfor %}
