@@ -111,7 +111,7 @@ def test_shipping_voucher_checkout_discount(
         is_shipping_required=True, shipping_method=Mock(
             price=Money(shipping_cost, currency='USD'),
             country_code=shipping_country_code,
-            get_total=Mock(return_value=shipping_total)))
+            get_total_price=Mock(return_value=shipping_total)))
     voucher = Voucher(
         code='unique', type=VoucherType.SHIPPING,
         discount_value_type=discount_type,
